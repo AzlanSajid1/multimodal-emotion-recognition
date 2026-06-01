@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multimodal Emotion Analyzer</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+  <div class="app">
+
+    <!-- ── Header ── -->
+    <header class="header">
+      <div class="header-inner">
+        <div class="logo">🧠 Emotion Analyzer</div>
+        <div class="header-sub">Multimodal · Video · Audio · Text</div>
+      </div>
+    </header>
+
+    <!-- ── Main layout ── -->
+    <main class="main">
+
+      <!-- ── Left panel: upload form ── -->
+      <section class="panel upload-panel">
+        <h2 class="panel-title">Upload & Settings</h2>
+
+        <div class="form-group">
+          <label class="label">Video File</label>
+          <div class="dropzone" id="dropzone">
+            <div class="dropzone-icon">🎬</div>
+            <div class="dropzone-text">Drop video here or click to browse</div>
+            <div class="dropzone-sub">MP4, AVI, MOV, MKV</div>
+            <input type="file" id="fileInput" accept=".mp4,.avi,.mov,.mkv" hidden>
+          </div>
+          <div class="file-info" id="fileInfo" style="display:none">
+            <span class="file-name" id="fileName"></span>
+            <span class="file-size" id="fileSize"></span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="label">Transcript <span class="optional">(optional)</span></label>
+          <textarea class="textarea" id="transcript"
+            placeholder="Paste transcript or captions here..."></textarea>
+        </div>
+
+        <div class="form-group">
+          <label class="label">Gemini API Key <span class="optional">(optional)</span></label>
+          <input type="password" class="input" id="geminiKey"
+            placeholder="AIza...">
+          <div class="input-hint">Get free key at aistudio.google.com</div>
+        </div>
+
+        <div class="form-group">
+          <label class="label">Fusion Weights</label>
+          <div class="slider-row">
+            <span class="slider-label">Video</span>
+            <input type="range" class="slider" id="wVideo" min="0" max="1" step="0.05" value="0.40">
+            <span class="slider-val" id="wVideoVal">0.40</span>
+          </div>
+          <div class="slider-row">
+            <span class="slider-label">Audio</span>
+            <input type="range" class="slider" id="wAudio" min="0" max="1" step="0.05" value="0.35">
+            <span class="slider-val" id="wAudioVal">0.35</span>
+          </div>
+          <div class="slider-row">
+            <span class="slider-label">Text</span>
+            <input type="range" class="slider" id="wNlp" min="0" max="1" step="0.05" value="0.25">
+            <span class="slider-val" id="wNlpVal">0.25</span>
+          </div>
+        </div>
+
+        <button class="btn-analyze" id="analyzeBtn" disabled>
+          <span class="btn-icon">▶</span> Analyze
+        </button>
+
+        <div class="progress-wrap" id="progressWrap" style="display:none">
+          <div class="progress-bar" id="progressBar"></div>
+          <div class="progress-label" id="progressLabel">Uploading...</div>
+        </div>
+      </section>
+
+      <!-- ── Right panel: results ── -->
+      <section class="panel results-panel" id="resultsPanel" style="display:none">
+
+        <!-- dominant emotion hero -->
+        <div class="hero-emotion" id="heroEmotion">
+          <div class="hero-label">Dominant Emotion</div>
+          <div class="hero-name" id="heroName">—</div>
+          <div class="hero-conf" id="heroConf">—</div>
+        </div>
+
+        <!-- three modality columns -->
+        <div class="modality-grid">
+          <div class="modality-card">
+            <div class="modality-title">🎥 Video</div>
+            <div class="bars" id="videoBars"></div>
+          </div>
+          <div class="modality-card">
+            <div class="modality-title">🎙️ Audio</div>
+            <div class="bars" id="audioBars"></div>
+          </div>
+          <div class="modality-card">
+            <div class="modality-title">📝 Text</div>
+            <div class="bars" id="nlpBars"></div>
+          </div>
+        </div>
+
+        <!-- fused result -->
+        <div class="fused-section">
+          <div class="section-title">🔀 Fused Result</div>
+          <div class="fused-chips" id="fusedChips"></div>
+          <div class="bars" id="fusedBars"></div>
+        </div>
+
+        <!-- llm analysis -->
+        <div class="llm-section" id="llmSection" style="display:none">
+          <div class="section-title">🤖 Gemini Analysis</div>
+          <div class="llm-text" id="llmText"></div>
+        </div>
+        <!-- frame by frame viewer -->
+        <div class="frame-viewer" id="frameViewerSection" style="display:none">
+          <div class="section-title">🎞️ Frame-by-Frame Analysis</div>
+
+          <!-- screen -->
+          <div class="fv-screen">
+            <img id="fvImage" src="" alt="video frame">
+            <div class="fv-overlay">
+              <div class="fv-badge">
+                <div class="fv-badge-label">dominant emotion</div>
+                <div class="fv-badge-emotion" id="fvEmotion">—</div>
+                <div class="fv-badge-conf"    id="fvConf">—</div>
+              </div>
+              <div class="fv-counter" id="fvCounter">1 / 16</div>
+              <div class="fv-minibars" id="fvMinibars"></div>
+            </div>
+          </div>
+
+          <!-- playbar -->
+          <div class="fv-playbar">
+            <button class="fv-playbtn" id="fvPlayBtn">&#9654;</button>
+            <span class="fv-frame-lbl" id="fvFrameLbl">Frame 1 of 16</span>
+          </div>
+
+          <!-- scrubber -->
+          <div class="fv-timeline">
+            <input type="range" class="scrubber" id="fvScrubber" min="0" max="15" value="0" step="1">
+            <div class="fv-tick-row" id="fvTickRow"></div>
+          </div>
+
+          <!-- panels -->
+          <div class="fv-panels">
+            <div class="fv-panel">
+              <div class="fv-panel-title">Video model · per frame</div>
+              <div id="fvBars"></div>
+            </div>
+            <div class="fv-chart-wrap">
+              <div class="fv-panel-title">Emotion timeline · click to jump</div>
+              <div style="position:relative; height:180px;">
+                <canvas id="fvChart"></canvas>
+                <div class="fv-cursor" id="fvCursor"></div>
+              </div>
+              <div class="fv-legend" id="fvLegend"></div>
+            </div>
+          </div>
+
+        </div>
+        <!-- error -->
+        <div class="error-box" id="errorBox" style="display:none"></div>
+
+      </section>
+
+    </main>
+  </div>
+
+  <script src="/static/app.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <script src="/static/app.js"></script>
+
+</body>
+</html>
