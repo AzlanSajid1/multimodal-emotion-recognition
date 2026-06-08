@@ -4,7 +4,7 @@ import torchvision.transforms as transforms
 from PIL import Image
 import cv2
 import numpy as np
-
+import os
 # ── EmotionCNN architecture (must match checkpoint) ───────────────────────────
 class ConvBNRELU(nn.Module):
     def __init__(self, in_ch, out_ch, kernel_size=3, stride=1, padding=1):
@@ -121,8 +121,8 @@ class EmotionCNN(nn.Module):
 
 
 # ── Load model ────────────────────────────────────────────────────────────────
-VIDEO_DIR = r"D:\final_emotion_app\models\video"
-
+#VIDEO_DIR = r"D:\final_emotion_app\models\video"
+VIDEO_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models", "video")
 print("Loading video model...")
 checkpoint = torch.load(f"{VIDEO_DIR}/emotion_cnn_best.pth", map_location="cpu")
 

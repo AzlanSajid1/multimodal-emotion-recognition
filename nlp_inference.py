@@ -2,7 +2,7 @@ import joblib
 import numpy as np
 import torch
 import torch.nn as nn
-
+import os
 # ── MLP architecture (must match checkpoint) ──────────────────────────────────
 class EmotionMLP(nn.Module):
     def __init__(self, input_dim=5000, num_classes=28):
@@ -23,8 +23,8 @@ class EmotionMLP(nn.Module):
 
 
 # ── Load all models once at import time ──────────────────────────────────────
-NLP_DIR = r"D:\final_emotion_app\models\nlp"
-
+#NLP_DIR = r"D:\final_emotion_app\models\nlp"
+NLP_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models", "nlp")
 print("Loading NLP models...")
 vectorizer    = joblib.load(f"{NLP_DIR}/tfidf_vectorizer.pkl")
 label_encoder = joblib.load(f"{NLP_DIR}/label_encoder.pkl")

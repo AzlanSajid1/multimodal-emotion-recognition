@@ -2,7 +2,7 @@ import joblib
 import numpy as np
 import torch
 import torch.nn as nn
-
+import os
 # ── Audio CNN (exact architecture from checkpoint) ────────────────────────────
 # Keys: conv1, bn1, conv2, bn2, pool(AdaptiveAvgPool→70), fc1, bn3, fc2
 class OptimizedAudioCNN(nn.Module):
@@ -30,8 +30,8 @@ class OptimizedAudioCNN(nn.Module):
 
 
 # ── Load all models once at import time ──────────────────────────────────────
-AUDIO_DIR = r"D:\final_emotion_app\models\audio"
-
+#AUDIO_DIR = r"D:\final_emotion_app\models\audio"
+AUDIO_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "models", "audio")
 print("Loading audio models...")
 voting_model   = joblib.load(f"{AUDIO_DIR}/best_voting_ensemble.joblib")
 stacking_model = joblib.load(f"{AUDIO_DIR}/best_stacking_ensemble.joblib")
