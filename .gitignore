@@ -3,4 +3,4 @@ __pycache__/
 *.exe
 whisper/
 *.pt
-*.joblib
+#*.joblib
