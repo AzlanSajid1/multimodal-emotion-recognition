@@ -1,0 +1,17 @@
+
+anthropic
+google-generativeai
+torch
+torchvision
+opencv-python
+Pillow
+numpy
+joblib
+scikit-learn
+librosa
+openai-whisper
+fastapi
+uvicorn
+python-multipart
+pydantic
+streamlit
