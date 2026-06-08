@@ -15,3 +15,5 @@ uvicorn
 python-multipart
 pydantic
 streamlit
+xgboost
+lightgbm
