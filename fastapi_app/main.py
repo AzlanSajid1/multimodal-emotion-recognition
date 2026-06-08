@@ -285,8 +285,7 @@ Keep your response concise and professional."""
 # ── Routes ────────────────────────────────────────────────────────────────────
 @app.get("/")
 def root():
-    return {"status": "Emotion Analyzer API is running"}
-
+    return FileResponse("fastapi_app/static/index.html")
 
 @app.get("/health")
 def health():
