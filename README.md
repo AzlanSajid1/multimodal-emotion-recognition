@@ -8,7 +8,7 @@ This repository is optimized for containerized deployment and is compatible with
 
 ## 🚀 Live Demo  
 The live application is hosted on Hugging Face Spaces:  
-👉 [AzlanSajid1/multimodal-emotion-recognition](https://hf.space)
+https://az-is21-multimodal-emotion-recognition.hf.space/
 
 ---
 
